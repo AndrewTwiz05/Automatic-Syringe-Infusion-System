@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syringe Pump Control</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f4f4f4; }
+    h1 { color: #333; }
+    .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+    input, button { margin: 10px 0; padding: 10px; width: 80%; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .status { margin-top: 20px; font-weight: bold; color: green; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Syringe Pump Control</h1>
+    <input type="number" id="flowRate" placeholder="Set Flow Rate (ml/hr)">
+    <button onclick="setFlowRate()">Set Flow Rate</button><br>
+    <button onclick="startPump()">Start Pump</button>
+    <button onclick="stopPump()">Stop Pump</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <script type="module">
+    // Firebase import and config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0X5Z8UdKVmHsdbHiWVjj3LN0Y8aa57Bk",
+      authDomain: "syringepump-9fc29.firebaseapp.com",
+      databaseURL: "https://syringepump-9fc29-default-rtdb.firebaseio.com",
+      projectId: "syringepump-9fc29",
+      storageBucket: "syringepump-9fc29.appspot.com",
+      messagingSenderId: "490736507877",
+      appId: "1:490736507877:web:70666d0a0af5d2121ced0c",
+      measurementId: "G-MRVELVZYQF"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function setFlowRate() {
+      const rate = document.getElementById("flowRate").value;
+      set(ref(db, 'pump/flowRate'), rate);
+      showStatus(`Flow rate set to ${rate} ml/hr`);
+    }
+
+    function startPump() {
+      set(ref(db, 'pump/status'), 'START');
+      showStatus("Pump started");
+    }
+
+    function stopPump() {
+      set(ref(db, 'pump/status'), 'STOP');
+      showStatus("Pump stopped");
+    }
+
+    function showStatus(msg) {
+      document.getElementById("statusMsg").innerText = msg;
+    }
+  </script>
+</body>
+</html>
